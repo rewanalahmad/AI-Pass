@@ -46,10 +46,7 @@ export function LaravelAuthBridge() {
 
     fetch(authApiUrl('/auth/me'), { credentials: 'include', cache: 'no-store' })
       .then(async (res) => {
-        if (!res.ok) {
-          if (user) signOut();
-          return null;
-        }
+        if (!res.ok) return null;
         return res.json() as Promise<{
           authenticated: boolean;
           user?: { id: string; email: string; name?: string; avatarUrl?: string };
@@ -69,7 +66,7 @@ export function LaravelAuthBridge() {
         }
       })
       .catch(() => {
-        if (user) signOut();
+        // Do not force sign-out on network failure
       });
 
     return () => {

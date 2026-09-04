@@ -18,6 +18,10 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@ai-pass/*": [
+        "../../packages/*",
+        "../../packages/*/src/index.ts"
       ]
     }
   },

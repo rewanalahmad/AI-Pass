@@ -5,6 +5,7 @@ import { useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { buildWorkspaceNav, WORKSPACE_BRAND } from '@ai-pass/platform-core';
 import { WorkspaceShell, WorkspaceSidebar, WorkspaceTopBar, GlobalSearch } from '@ai-pass/ui';
+import { authApiUrl } from '@/lib/auth-api';
 import { useApp } from '../premium/AppProviders';
 
 export interface WorkspaceLayoutClientProps {
@@ -22,7 +23,7 @@ export function WorkspaceLayoutClient({
 }: WorkspaceLayoutClientProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, resolvedTheme, setTheme } = useApp();
+  const { user, signOut, resolvedTheme, setTheme } = useApp();
   const [collapsed, setCollapsed] = useState(false);
   const navItems = buildWorkspaceNav();
 
@@ -34,6 +35,16 @@ export function WorkspaceLayoutClient({
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  };
+
+  const handleSignOut = async () => {
+    signOut();
+    try {
+      await fetch(authApiUrl('/auth/logout'), { method: 'POST', credentials: 'include' });
+    } catch {
+      // Ignore network errors on logout
+    }
+    window.location.href = '/';
   };
 
   return (
@@ -62,6 +73,7 @@ export function WorkspaceLayoutClient({
             user
               ? {
                   name: user.name,
+                  email: user.email,
                   avatarInitials: user.avatarInitials,
                   avatarUrl: user.avatarUrl,
                   plan: planLabel,
@@ -70,6 +82,8 @@ export function WorkspaceLayoutClient({
           }
           theme={resolvedTheme}
           onThemeToggle={toggleTheme}
+          onSignOut={handleSignOut}
+          onNavigate={(path) => router.push(path)}
         />
       }
     >

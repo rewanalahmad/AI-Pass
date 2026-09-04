@@ -22,7 +22,7 @@ class LoginController extends Controller
         ]);
     }
 
-    public function login(Request $request): RedirectResponse
+    public function login(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -33,6 +33,13 @@ class LoginController extends Controller
         $callback = AuthRedirect::resolve($request->input('callback'));
 
         if (! Auth::attempt($credentials, $remember)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'error' => 'Invalid email or password.',
+                    'errors' => ['email' => ['Invalid email or password.']],
+                ], 401);
+            }
+
             return back()
                 ->withInput($request->only('email', 'remember'))
                 ->withErrors(['email' => 'Invalid email or password.']);
@@ -42,6 +49,13 @@ class LoginController extends Controller
         if ($user !== null && ! $user->hasPassword()) {
             Auth::logout();
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'error' => 'This account uses Google sign-in. Continue with Google instead.',
+                    'errors' => ['email' => ['This account uses Google sign-in. Continue with Google instead.']],
+                ], 400);
+            }
+
             return back()
                 ->withInput($request->only('email'))
                 ->withErrors(['email' => 'This account uses Google sign-in. Continue with Google instead.']);
@@ -49,6 +63,19 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
         $user?->touchLastLogin();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => $callback,
+                'user' => [
+                    'id' => $user?->id,
+                    'name' => $user?->name,
+                    'email' => $user?->email,
+                    'avatarUrl' => $user?->avatar_url,
+                ],
+            ]);
+        }
 
         return redirect()->to($callback);
     }

@@ -1,84 +1,129 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
-import { authApiUrl, authCallbackQuery, useLaravelAuth } from '@/lib/auth-api';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { Suspense, useState } from 'react';
+import { authApiUrl, authCallbackQuery } from '@/lib/auth-api';
+import { useApp } from '../components/premium/AppProviders';
 import { PremiumNav } from '../components/premium/PremiumNav';
-import styles from './login.module.css';
-
-const usePhpAuth = process.env.NEXT_PUBLIC_USE_PHP_AUTH === '1';
-const useLaravelAuth = process.env.NEXT_PUBLIC_USE_LARAVEL_AUTH === '1';
-const useServerAuth = usePhpAuth || useLaravelAuth;
+import styles from '../auth/auth-styles.module.css';
 
 function LoginContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/workspace';
-  const error = searchParams.get('error');
+  const queryError = searchParams.get('error');
+  const { signIn } = useApp();
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [generalError, setGeneralError] = useState<string | null>(
+    queryError ? 'Sign-in failed. Please verify your credentials and try again.' : null
+  );
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
 
-  async function handleGoogleSignIn() {
-    if (useLaravelAuth) {
-      window.location.href = authApiUrl(`/auth/google${authCallbackQuery(callbackUrl)}`);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[name];
+        return updated;
+      });
+    }
+    setGeneralError(null);
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email address is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      setGeneralError('Please enter your email and password to log in.');
       return;
     }
-    if (usePhpAuth) {
-      const params = callbackUrl !== '/workspace' ? `?callback=${encodeURIComponent(callbackUrl)}` : '';
-      window.location.href = `/auth/google.php${params}`;
-      return;
-    }
+
     setLoading(true);
-    await signIn('google', { callbackUrl });
-  }
+    setGeneralError(null);
 
-  const emailLoginHref = useLaravelAuth
-    ? authApiUrl(`/auth/login${authCallbackQuery(callbackUrl)}`)
-    : `/auth/login.php${
-        callbackUrl !== '/workspace' ? `?callback=${encodeURIComponent(callbackUrl)}` : ''
-      }`;
+    try {
+      const res = await fetch(authApiUrl('/auth/login'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+          remember: true,
+          callback: callbackUrl,
+        }),
+      });
 
-  const registerHref = useLaravelAuth
-    ? authApiUrl(`/auth/register${authCallbackQuery(callbackUrl)}`)
-    : '/auth/register.php';
+      const data = await res.json().catch(() => ({}));
 
-  if (useLaravelAuth || usePhpAuth) {
-    return (
-      <div className={styles.page}>
-        <PremiumNav variant="landing" />
-        <main className={styles.main}>
-          <div className={styles.card}>
-            <div className={styles.badge}>Secure sign-in</div>
-            <h1 className={styles.title}>Welcome to AI-Pass</h1>
-            <p className={styles.subtitle}>
-              Sign in with Google or email to get 500 free credits and access the AI Playground.
-            </p>
-            {error && (
-              <div className={styles.error} role="alert">
-                Sign-in failed. Please try again.
-              </div>
-            )}
-            <button
-              type="button"
-              className={styles.googleBtn}
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-            >
-              <GoogleIcon />
-              {loading ? 'Redirecting…' : 'Continue with Google'}
-            </button>
-            <p className={styles.hint}>
-              <a href={emailLoginHref}>Email sign-in</a>
-              {' · '}
-              <a href={registerHref}>Create account</a>
-            </p>
-            <p className={styles.legal}>
-              By continuing, you agree to AI-Pass terms and privacy policy.
-            </p>
-          </div>
-        </main>
-      </div>
-    );
-  }
+      if (!res.ok) {
+        const errorMsg =
+          data.error ||
+          (data.errors && Object.values(data.errors).flat().join(' ')) ||
+          data.message ||
+          'Invalid email or password. Please check your credentials and try again.';
+        setGeneralError(errorMsg);
+        setLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        const name = data.user.name?.trim() || data.user.email?.split('@')[0] || 'User';
+        signIn({
+          id: data.user.id || String(Date.now()),
+          name,
+          email: data.user.email || formData.email.trim(),
+          avatarInitials: name.slice(0, 2).toUpperCase(),
+          avatarUrl: data.user.avatarUrl,
+          plan: 'free',
+          workspace: 'default',
+          onboarded: true,
+        });
+      }
+
+      router.push('/workspace');
+    } catch {
+      setGeneralError('Unable to connect to the authentication server. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    setOauthLoading(true);
+    window.location.href = authApiUrl(`/auth/google${authCallbackQuery(callbackUrl)}`);
+  };
 
   return (
     <div className={styles.page}>
@@ -87,34 +132,98 @@ function LoginContent() {
       <main className={styles.main}>
         <div className={styles.card}>
           <div className={styles.badge}>Secure sign-in</div>
-          <h1 className={styles.title}>Welcome to AI-Pass</h1>
+          <h1 className={styles.title}>Welcome Back</h1>
           <p className={styles.subtitle}>
-            Sign in with Google to get 500 free credits and access the AI Playground.
+            Sign in with email or OAuth to access your AI-Pass workspace.
           </p>
 
-          {error && (
-            <div className={styles.error} role="alert">
-              Sign-in failed. Check your OAuth credentials and try again.
+          {generalError && (
+            <div className={styles.errorBanner} role="alert">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>{generalError}</span>
             </div>
           )}
 
-          <button
-            type="button"
-            className={styles.googleBtn}
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-          >
-            <GoogleIcon />
-            {loading ? 'Redirecting…' : 'Continue with Google'}
-          </button>
+          <form onSubmit={handleSubmit} className={styles.form} noValidate>
+            <div className={styles.fieldGroup}>
+              <label htmlFor="email" className={styles.label}>Email Address</label>
+              <div className={styles.inputWrapper}>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`${styles.input} ${fieldErrors.email ? styles.inputError : ''}`}
+                />
+              </div>
+              {fieldErrors.email && <span className={styles.fieldError}>{fieldErrors.email}</span>}
+            </div>
 
-          <p className={styles.hint}>
-            Configure Google OAuth in your Cloud Console (e.g. Sportify project). See repository{' '}
-            <code>docs/AUTH.md</code> for setup steps.
+            <div className={styles.fieldGroup}>
+              <div className={styles.label}>
+                <label htmlFor="password">Password</label>
+                <Link href={authApiUrl('/auth/forgot-password')} style={{ fontSize: '0.75rem', color: '#818cf8', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
+              </div>
+              <div className={styles.inputWrapper}>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`${styles.input} ${fieldErrors.password ? styles.inputError : ''}`}
+                />
+                <button
+                  type="button"
+                  className={styles.togglePasswordBtn}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {fieldErrors.password && <span className={styles.fieldError}>{fieldErrors.password}</span>}
+            </div>
+
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={loading}
+            >
+              {loading ? 'Logging in…' : 'Log In'}
+            </button>
+          </form>
+
+          <div className={styles.divider}>
+            <span>or sign in with</span>
+          </div>
+
+          <div className={styles.oauthGrid}>
+            <button
+              type="button"
+              className={styles.oauthBtn}
+              onClick={handleGoogleSignIn}
+              disabled={oauthLoading}
+            >
+              <GoogleIcon />
+              {oauthLoading ? 'Redirecting…' : 'Continue with Google'}
+            </button>
+          </div>
+
+          <p className={styles.footerHint}>
+            Don&apos;t have an account? <Link href="/signup">Sign up</Link>
           </p>
 
           <p className={styles.legal}>
-            By continuing, you agree to AI-Pass terms and privacy policy.
+            By continuing, you agree to AI-Pass terms of service and privacy policy.
           </p>
         </div>
       </main>
@@ -132,7 +241,7 @@ export default function LoginPage() {
 
 function GoogleIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
       <path
         fill="#4285F4"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

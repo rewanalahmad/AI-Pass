@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 
-/** Static-export-safe brand logo path */
-export const BRAND_LOGO_SRC = '/logo.png';
+export const BRAND_LOGO_SRC = '/logo.svg';
 export const BRAND_LOGO_ALT = 'AI-Pass';
 export const BRAND_HOME_ARIA_LABEL = 'AI-Pass home';
 
@@ -14,7 +13,7 @@ export interface BrandLogoProps {
 }
 
 export function BrandLogo({
-  height,
+  height = 36,
   maxWidth,
   className,
   style,
@@ -27,10 +26,10 @@ export function BrandLogo({
       alt={alt}
       className={className}
       style={{
+        height: height ?? 36,
         width: 'auto',
         display: 'block',
         objectFit: 'contain',
-        ...(height != null ? { height } : {}),
         ...(maxWidth != null ? { maxWidth } : {}),
         ...style,
       }}

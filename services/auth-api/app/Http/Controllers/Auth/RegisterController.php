@@ -24,7 +24,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function register(Request $request): RedirectResponse
+    public function register(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
             'name' => ['nullable', 'string', 'max:255'],
@@ -46,6 +46,20 @@ class RegisterController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => '/confirm-email?email='.urlencode($user->email),
+                'requires_verification' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'avatarUrl' => $user->avatar_url,
+                ],
+            ], 201);
+        }
 
         return redirect()->route('verification.notice')->with('callback', $callback);
     }

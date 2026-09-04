@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { signOut as nextAuthSignOut } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { Badge } from '@ai-pass/ui';
+import { authApiUrl } from '@/lib/auth-api';
 import { BrandLogoLink } from '../BrandLogoLink';
 import { SITE_NAV, type SiteNavItem } from '../../lib/site-nav';
 import { useApp } from './AppProviders';
@@ -119,7 +119,12 @@ export function PremiumNav({ variant = 'business' }: { variant?: 'landing' | 'bu
   const handleSignOut = async () => {
     setUserOpen(false);
     signOut();
-    await nextAuthSignOut({ callbackUrl: '/' });
+    try {
+      await fetch(authApiUrl('/auth/logout'), { method: 'POST', credentials: 'include' });
+    } catch {
+      // Ignore network errors on logout
+    }
+    window.location.href = '/';
   };
 
   const renderAvatar = () => {
@@ -202,7 +207,23 @@ export function PremiumNav({ variant = 'business' }: { variant?: 'landing' | 'bu
           title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
           aria-label="Toggle theme"
         >
-          {resolvedTheme === 'dark' ? '☀️' : '🌙'}
+          {resolvedTheme === 'dark' ? (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="M4.93 4.93l1.41 1.41" />
+              <path d="M17.66 17.66l1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="M6.34 17.66l-1.41 1.41" />
+              <path d="M19.07 4.93l-1.41 1.41" />
+            </svg>
+          ) : (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
         </button>
 
         {variant === 'business' && (
@@ -279,10 +300,10 @@ export function PremiumNav({ variant = 'business' }: { variant?: 'landing' | 'bu
           ) : (
             <>
               <Link href="/login" className={`${styles.btnGhost} ${styles.desktopOnly}`}>
-                Sign In
+                Log In
               </Link>
-              <Link href="/login" className={`${styles.btnPrimary} ${styles.desktopOnly}`}>
-                Start Free
+              <Link href="/signup" className={`${styles.btnPrimary} ${styles.desktopOnly}`}>
+                Sign Up
               </Link>
             </>
           )
@@ -331,8 +352,8 @@ export function PremiumNav({ variant = 'business' }: { variant?: 'landing' | 'bu
             </div>
           </>
         ) : (
-          <Link href="/login" className={`${styles.btnPrimary} ${styles.desktopOnly}`}>
-            Sign In
+          <Link href="/signup" className={`${styles.btnPrimary} ${styles.desktopOnly}`}>
+            Sign Up
           </Link>
         )}
 
@@ -410,7 +431,29 @@ export function PremiumNav({ variant = 'business' }: { variant?: 'landing' | 'bu
               className={styles.mobileThemeBtn}
               onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             >
-              {resolvedTheme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode'}
+              {resolvedTheme === 'dark' ? (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2" />
+                    <path d="M12 20v2" />
+                    <path d="M4.93 4.93l1.41 1.41" />
+                    <path d="M17.66 17.66l1.41 1.41" />
+                    <path d="M2 12h2" />
+                    <path d="M20 12h2" />
+                    <path d="M6.34 17.66l-1.41 1.41" />
+                    <path d="M19.07 4.93l-1.41 1.41" />
+                  </svg>
+                  <span>Light mode</span>
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                  <span>Dark mode</span>
+                </>
+              )}
             </button>
             <Link href={user ? '/workspace' : '/login'} className={styles.btnPrimary} onClick={closeMobile}>
               {user ? 'Go to Workspace' : 'Start Free'}

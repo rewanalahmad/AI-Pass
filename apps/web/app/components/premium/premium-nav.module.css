@@ -5,33 +5,37 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  padding: 1rem clamp(1rem, 4vw, 2rem);
-  background: rgba(13, 17, 23, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
+  padding: 0.85rem clamp(1.25rem, 5vw, 2.75rem);
+  background: rgba(7, 9, 14, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
 }
 
 [data-theme='light'] .nav {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-weight: 700;
-  font-size: 1.125rem;
   text-decoration: none;
-  letter-spacing: -0.02em;
   color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.9;
 }
 
 .logoImg {
-  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  height: auto;
   width: auto;
-  max-width: 240px;
-  object-fit: contain;
 }
 
 .logoMark {
@@ -407,47 +411,68 @@
 .btnGhost {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.52rem 1.25rem;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.15s, box-shadow 0.2s;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btnPrimary {
-  background: linear-gradient(135deg, var(--accent-muted) 0%, var(--accent) 100%);
-  color: #fff;
-  box-shadow: 0 0 16px rgba(88, 166, 255, 0.2);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #06b6d4 100%);
+  background-size: 200% auto;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  cursor: pointer;
 }
 
 .btnPrimary:hover {
-  transform: translateY(-1px);
+  background-position: right center;
+  transform: translateY(-1.5px);
+  box-shadow: 0 0 28px rgba(99, 102, 241, 0.55), 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .btnGhost {
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
 .btnGhost:hover {
-  color: var(--text);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.2);
 }
 
 .userBtn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 4px 10px 4px 4px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
+  padding: 4px 12px 4px 4px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 20, 28, 0.8);
   color: inherit;
   cursor: pointer;
   font-size: 0.8125rem;
-  transition: border-color 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.userBtn:hover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
 }
 
 .userBtn:hover {

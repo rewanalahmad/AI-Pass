@@ -1,25 +1,26 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import type { NextRequest } from 'next/server';
 
-export default auth((req) => {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isAuthenticated = Boolean(req.auth);
 
-  if (isAuthenticated && (pathname === '/' || pathname === '/login')) {
+  // Check for session cookie from NextAuth / Auth.js
+  const sessionToken =
+    req.cookies.get('next-auth.session-token')?.value ||
+    req.cookies.get('__Secure-next-auth.session-token')?.value ||
+    req.cookies.get('authjs.session-token')?.value ||
+    req.cookies.get('__Secure-authjs.session-token')?.value;
+
+  const isAuthenticated = Boolean(sessionToken);
+
+  // Redirect authenticated users away from auth pages to workspace
+  if (isAuthenticated && (pathname === '/' || pathname === '/login' || pathname === '/signup')) {
     return NextResponse.redirect(new URL('/workspace', req.url));
   }
 
-  const isProtected =
-    pathname.startsWith('/workspace') || pathname.startsWith('/dashboard');
-  if (!isAuthenticated && isProtected) {
-    const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
   return NextResponse.next();
-});
+}
 
 export const config = {
-  matcher: ['/', '/login', '/workspace/:path*', '/dashboard/:path*'],
+  matcher: ['/', '/login', '/signup', '/workspace/:path*', '/dashboard/:path*'],
 };

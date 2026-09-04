@@ -26,6 +26,6 @@ export const WORKSPACE_BRAND = {
   name: 'AI-Pass',
   tagline: 'Enterprise AI Operating System',
   logoMark: 'AP',
-  logoSrc: '/logo.png',
+  logoSrc: '/logo.svg',
   logoAlt: 'AI-Pass',
 } as const;
