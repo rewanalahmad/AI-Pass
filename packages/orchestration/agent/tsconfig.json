@@ -1,19 +1,13 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
-    {
-      "path": "../shared"
-    },
-    {
-      "path": "../provider-hub"
-    }
+    { "path": "../../platform/shared" },
+    { "path": "../../reasoning/ai-core" }
   ]
 }

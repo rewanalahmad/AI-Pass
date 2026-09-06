@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -7,10 +7,8 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../shared" },
-    { "path": "../provider-hub" },
-    { "path": "../wallet" },
-    { "path": "../membership" },
-    { "path": "../marketplace-core" }
+    { "path": "../../platform/shared" },
+    { "path": "../../reasoning/ai-core" },
+    { "path": "../../reasoning/provider-hub" }
   ]
 }

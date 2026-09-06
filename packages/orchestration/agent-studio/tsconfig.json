@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -7,13 +7,8 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../shared" },
-    { "path": "../marketplace" },
-    { "path": "../marketplace-core" },
+    { "path": "../../platform/shared" },
     { "path": "../runtime-core" },
-    { "path": "../automation-engine" },
-    { "path": "../membership" },
-    { "path": "../governance" },
-    { "path": "../knowledge-pipeline" }
+    { "path": "../../reasoning/ai-core" }
   ]
 }

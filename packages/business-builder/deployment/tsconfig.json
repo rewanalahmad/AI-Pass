@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -7,10 +7,10 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../shared" },
+    { "path": "../../platform/shared" },
     { "path": "../builder" },
     { "path": "../templates" },
     { "path": "../solution-runtime" },
-    { "path": "../governance" }
+    { "path": "../../governance/governance" }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -7,9 +7,9 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../shared" },
-    { "path": "../marketplace-core" },
-    { "path": "../store" },
-    { "path": "../trust-engine" }
+    { "path": "../../platform/shared" },
+    { "path": "../../marketplace/marketplace-core" },
+    { "path": "../../marketplace/store" },
+    { "path": "../../governance/trust-engine" }
   ]
 }

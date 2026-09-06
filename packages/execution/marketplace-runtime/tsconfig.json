@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -7,10 +7,7 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../shared" },
-    { "path": "../livesync" },
-    { "path": "../marketplace-core" },
-    { "path": "../runtime-core" },
-    { "path": "../wallet" }
+    { "path": "../../platform/shared" },
+    { "path": "../../marketplace/marketplace-core" }
   ]
 }
