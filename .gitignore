@@ -40,9 +40,9 @@ services/ocr-service/outputs/
 *.onnx
 *.ckpt
 
-php-auth/auth-lib/.env
-php-auth/auth-lib/vendor/
-php-auth/composer.phar
+services/php-auth-legacy/auth-lib/.env
+services/php-auth-legacy/auth-lib/vendor/
+services/php-auth-legacy/composer.phar
 
 .pnpm-store
 .build-node.lock
@@ -60,3 +60,6 @@ apps/web/tmp/
 
 # Scratch clone of the investor-pack repo — not part of this project
 .tmp-investor-pack/
+
+CLAUDE.md
+image.png
