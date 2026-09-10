@@ -50,7 +50,9 @@ export function createAuth() {
       useSecureCookies: process.env.NODE_ENV === 'production',
     },
     rateLimit: {
-      enabled: true,
+      // A suite that signs in more than five times a minute would otherwise
+      // trip the sign-in limiter and fail for the wrong reason.
+      enabled: process.env.AUTH_DISABLE_RATE_LIMIT !== 'true',
       window: 60,
       max: 100,
       customRules: {
