@@ -14,9 +14,20 @@ import {
 } from './support.js';
 
 // These exercise the real Postgres schema. Without a database there is nothing
-// meaningful to assert, so the suite is skipped rather than mocked into
-// passing. CI always provides DATABASE_URL.
+// meaningful to assert, so the suite is skipped locally rather than mocked into
+// passing.
 const hasDatabase = Boolean(process.env.DATABASE_URL);
+
+// Skipping is only acceptable on a developer machine. Turbo runs tasks in
+// strict environment mode, so a variable that is not declared in turbo.json
+// never reaches this process, and the whole suite would skip in CI while the
+// run still reported success.
+if (!hasDatabase && process.env.CI) {
+  throw new Error(
+    'DATABASE_URL is not set in CI. The auth integration suite must run there, ' +
+      'not skip. Check the env list on the test task in turbo.json.',
+  );
+}
 
 describe.skipIf(!hasDatabase)('authentication', () => {
   let app: Express;
