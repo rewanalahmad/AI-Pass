@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useState } from 'react';
-import { authApiUrl, authCallbackQuery } from '@/lib/auth-api';
-import { useApp } from '../components/premium/AppProviders';
+import { signInWithEmail, signInWithGoogle } from '@/lib/auth-api';
 import { PremiumNav } from '../components/premium/PremiumNav';
 import styles from '../auth/auth-styles.module.css';
 
@@ -13,7 +12,6 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/workspace';
   const queryError = searchParams.get('error');
-  const { signIn } = useApp();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -71,58 +69,28 @@ function LoginContent() {
     setGeneralError(null);
 
     try {
-      const res = await fetch(authApiUrl('/auth/login'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: formData.email.trim(),
-          password: formData.password,
-          remember: true,
-          callback: callbackUrl,
-        }),
-      });
+      // Sign in using backend auth API
+      await signInWithEmail(formData.email.trim(), formData.password);
 
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        const errorMsg =
-          data.error ||
-          (data.errors && Object.values(data.errors).flat().join(' ')) ||
-          data.message ||
-          'Invalid email or password. Please check your credentials and try again.';
-        setGeneralError(errorMsg);
-        setLoading(false);
-        return;
-      }
-
-      if (data.user) {
-        const name = data.user.name?.trim() || data.user.email?.split('@')[0] || 'User';
-        signIn({
-          id: data.user.id || String(Date.now()),
-          name,
-          email: data.user.email || formData.email.trim(),
-          avatarInitials: name.slice(0, 2).toUpperCase(),
-          avatarUrl: data.user.avatarUrl,
-          plan: 'free',
-          workspace: 'default',
-          onboarded: true,
-        });
-      }
-
-      router.push('/workspace');
-    } catch {
-      setGeneralError('Unable to connect to the authentication server. Please try again.');
+      // Direct to workspace upon successful login
+      router.push(callbackUrl);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Invalid email or password. Please try again.';
+      setGeneralError(msg);
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setOauthLoading(true);
-    window.location.href = authApiUrl(`/auth/google${authCallbackQuery(callbackUrl)}`);
+    setGeneralError(null);
+    try {
+      await signInWithGoogle(callbackUrl);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Google sign-in failed. Please try again.';
+      setGeneralError(msg);
+      setOauthLoading(false);
+    }
   };
 
   return (
@@ -134,7 +102,7 @@ function LoginContent() {
           <div className={styles.badge}>Secure sign-in</div>
           <h1 className={styles.title}>Welcome Back</h1>
           <p className={styles.subtitle}>
-            Sign in with email or OAuth to access your AI-Pass workspace.
+            Sign in with email or Google to access your AI-Pass workspace.
           </p>
 
           {generalError && (
@@ -168,7 +136,7 @@ function LoginContent() {
             <div className={styles.fieldGroup}>
               <div className={styles.label}>
                 <label htmlFor="password">Password</label>
-                <Link href={authApiUrl('/auth/forgot-password')} style={{ fontSize: '0.75rem', color: '#818cf8', textDecoration: 'none' }}>
+                <Link href="#" style={{ fontSize: '0.75rem', color: '#818cf8', textDecoration: 'none' }}>
                   Forgot password?
                 </Link>
               </div>

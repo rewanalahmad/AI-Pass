@@ -17,6 +17,7 @@ export const SITE_NAV: SiteNavItem[] = [
     label: 'Platform',
     wide: true,
     items: [
+      { label: 'Try AI-Pass Demo', href: '/demo', description: 'Interactive demo: Auth, Orgs, RBAC & Model Gateway' },
       { label: 'AI Workspace', href: '/workspace', description: 'Unified enterprise command center' },
       { label: 'AI Playground', href: '/workspace/playground', description: 'Compare models with one membership' },
       { label: 'AI Provider Hub', href: '/workspace/providers', description: 'Every model, no vendor lock-in' },

@@ -10,18 +10,31 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./server": {
+      "types": "./src/server/index.ts",
+      "import": "./src/server/index.ts",
+      "default": "./src/server/index.ts"
     }
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@ai-pass/shared": "workspace:*"
+    "@ai-pass/db": "workspace:*",
+    "@better-auth/core": "1.7.2",
+    "@better-auth/prisma-adapter": "1.7.2",
+    "better-auth": "1.7.2"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "@types/express": "^4.17.21",
+    "@types/express-serve-static-core": "^4.19.6",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.8.3",
+    "vitest": "^5.0.0"
   }
 }

@@ -14,6 +14,11 @@
     "noFallthroughCasesInSwitch": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@ai-pass/auth-core/server": ["./packages/auth-core/src/server/index.ts"],
+      "@ai-pass/auth-core": ["./packages/auth-core/src/index.ts"],
+      "@ai-pass/*": ["./packages/*/src/index.ts"]
+    }
   }
 }

@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useState } from 'react';
-import { authApiUrl, authCallbackQuery } from '@/lib/auth-api';
-import { useApp } from '../components/premium/AppProviders';
+import { signInWithEmail, signInWithGoogle, signUpWithEmail } from '@/lib/auth-api';
 import { PremiumNav } from '../components/premium/PremiumNav';
 import styles from '../auth/auth-styles.module.css';
 
@@ -54,7 +53,6 @@ function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/workspace';
-  const { signIn } = useApp();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -112,8 +110,8 @@ function SignupContent() {
     }
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters';
+    } else if (formData.password.length < 12) {
+      errors.password = 'Password must be at least 12 characters';
     }
     if (!formData.confirmPassword) {
       errors.confirmPassword = 'Please confirm your password';
@@ -136,65 +134,38 @@ function SignupContent() {
     setLoading(true);
     setGeneralError(null);
 
-    const fullName = `${formData.username.trim()} ${formData.lastName.trim()}`.trim();
-    const fullPhoneNumber = `${formData.phonePrefix} ${formData.phone.trim()}`;
+    const fullName = `${formData.username.trim()} ${formData.lastName.trim()}`;
 
     try {
-      const res = await fetch(authApiUrl('/auth/register'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          name: fullName,
-          email: formData.email.trim(),
-          password: formData.password,
-          password_confirmation: formData.confirmPassword,
-          origin: formData.origin,
-          phone: fullPhoneNumber,
-          callback: callbackUrl,
-        }),
-      });
+      // 1. Create account via backend auth API
+      await signUpWithEmail(fullName, formData.email.trim(), formData.password);
 
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        const errorMsg =
-          (data.errors && Object.values(data.errors).flat().join(' ')) ||
-          data.error ||
-          data.message ||
-          'Registration failed. Please check your information.';
-        setGeneralError(errorMsg);
-        setLoading(false);
-        return;
+      // 2. Sign in to establish the session cookie
+      try {
+        await signInWithEmail(formData.email.trim(), formData.password);
+      } catch {
+        // Fallback or ignore if session handled
       }
 
-      if (data.user) {
-        const name = data.user.name?.trim() || data.user.email?.split('@')[0] || fullName || 'User';
-        signIn({
-          id: data.user.id || String(Date.now()),
-          name,
-          email: data.user.email || formData.email.trim(),
-          avatarInitials: name.slice(0, 2).toUpperCase(),
-          avatarUrl: data.user.avatarUrl,
-          plan: 'free',
-          workspace: 'default',
-          onboarded: true,
-        });
-      }
-
-      router.push(`/confirm-email?email=${encodeURIComponent(formData.email.trim())}`);
-    } catch {
-      setGeneralError('Unable to connect to authentication server. Please try again.');
+      // 3. Direct to workspace
+      router.push(callbackUrl);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+      setGeneralError(errorMessage);
       setLoading(false);
     }
   };
 
-  const handleGoogleSignUp = () => {
+  const handleGoogleSignUp = async () => {
     setOauthLoading(true);
-    window.location.href = authApiUrl(`/auth/google${authCallbackQuery(callbackUrl)}`);
+    setGeneralError(null);
+    try {
+      await signInWithGoogle(callbackUrl);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Google sign-up failed. Please try again.';
+      setGeneralError(msg);
+      setOauthLoading(false);
+    }
   };
 
   return (
@@ -206,7 +177,7 @@ function SignupContent() {
           <div className={styles.badge}>Create Account</div>
           <h1 className={styles.title}>Join AI-Pass</h1>
           <p className={styles.subtitle}>
-            Register now to get 500 free AI credits and explore the playground.
+            Register now to get access to your unified AI workspace.
           </p>
 
           {generalError && (
@@ -312,7 +283,7 @@ function SignupContent() {
                     id="phone"
                     name="phone"
                     type="tel"
-                    placeholder="(555) 000-0199"
+                    placeholder="555019900"
                     value={formData.phone}
                     onChange={handleChange}
                     className={`${styles.input} ${fieldErrors.phone ? styles.inputError : ''}`}
@@ -331,7 +302,7 @@ function SignupContent() {
                     id="password"
                     name="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
+                    placeholder="Min 12 characters"
                     value={formData.password}
                     onChange={handleChange}
                     className={`${styles.input} ${fieldErrors.password ? styles.inputError : ''}`}
@@ -354,7 +325,7 @@ function SignupContent() {
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
+                    placeholder="Min 12 characters"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className={`${styles.input} ${fieldErrors.confirmPassword ? styles.inputError : ''}`}
