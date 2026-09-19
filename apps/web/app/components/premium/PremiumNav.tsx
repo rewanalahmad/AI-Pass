@@ -120,6 +120,7 @@ export function PremiumNav({ variant = 'business' }: { variant?: 'landing' | 'bu
     setUserOpen(false);
     signOut();
     try {
+      await fetch(authApiUrl('/api/auth/sign-out'), { method: 'POST', credentials: 'include' });
       await fetch(authApiUrl('/auth/logout'), { method: 'POST', credentials: 'include' });
     } catch {
       // Ignore network errors on logout

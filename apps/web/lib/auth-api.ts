@@ -6,6 +6,10 @@ export const AUTH_API_BASE = (
   process.env.NEXT_PUBLIC_AUTH_API_URL ?? 'http://localhost:4000'
 ).replace(/\/$/, '');
 
+export function authApiUrl(path: string): string {
+  return `${AUTH_API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 export async function signUpWithEmail(name: string, email: string, password: string) {
   const res = await fetch(`${AUTH_API_BASE}/api/auth/sign-up/email`, {
     method: 'POST',
@@ -67,5 +71,5 @@ export async function signOut() {
   await fetch(`${AUTH_API_BASE}/api/auth/sign-out`, {
     method: 'POST',
     credentials: 'include',
-  }).catch(() => {});
+  }).catch(() => { });
 }
