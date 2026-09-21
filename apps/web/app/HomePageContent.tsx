@@ -9,100 +9,55 @@ import styles from './page.module.css';
 import section from './home-sections.module.css';
 
 const TRUSTED_LOGOS = [
-  {
-    name: 'OpenAI',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M22.28 9.92a5.95 5.95 0 0 0-.52-4.93 6.06 6.06 0 0 0-4.04-2.8 6.03 6.03 0 0 0-5.08.76 6.04 6.04 0 0 0-4.08 1.48 6 6 0 0 0-1.92 4.41c0 .35.03.7.08 1.05a5.97 5.97 0 0 0-3.3 2.58 6.02 6.02 0 0 0-.6 4.9 6.06 6.06 0 0 0 3.32 3.86 6 6 0 0 0 4.1.48 6.06 6.06 0 0 0 4.07 2.8 6.03 6.03 0 0 0 5.08-.76 6.05 6.05 0 0 0 4.08-1.48 6 6 0 0 0 1.92-4.41c0-.35-.03-.7-.08-1.05a5.97 5.97 0 0 0 3.3-2.58 6.02 6.02 0 0 0 .6-4.9 6.05 6.05 0 0 0-1.93-2.41zM13.6 21.67a4.5 4.5 0 0 1-2.9-.17 4.53 4.53 0 0 1-1.34-.84l4.24-2.45a.75.75 0 0 0 .38-.65v-5.26l1.62.94v5.33a4.52 4.52 0 0 1-2 3.1zm-8.8-3.4a4.52 4.52 0 0 1-.7-2.82 4.55 4.55 0 0 1 .94-2.73l4.24 2.45a.75.75 0 0 0 .75 0l4.56-2.63v1.87l-4.62 2.67a4.52 4.52 0 0 1-5.17-.3v1.49zm-1.07-7.6a4.52 4.52 0 0 1 2.2-2.19 4.54 4.54 0 0 1 2.85-.35v4.9a.75.75 0 0 0 .38.65l4.56 2.63-1.62.94-4.62-2.67a4.52 4.52 0 0 1-3.75-3.91zm14.8 2.6l-4.56-2.63 1.62-.94 4.62 2.67a4.52 4.52 0 0 1 3.75 3.91 4.52 4.52 0 0 1-2.2 2.19 4.54 4.54 0 0 1-2.85.35v-4.9a.75.75 0 0 0-.38-.65zm2.7-2.67a4.55 4.55 0 0 1-.94 2.73l-4.24-2.45a.75.75 0 0 0-.75 0l-4.56 2.63v-1.87l4.62-2.67a4.52 4.52 0 0 1 5.87 1.63zm-8.83-3.6a4.52 4.52 0 0 1 2.9.17 4.53 4.53 0 0 1 1.34.84l-4.24 2.45a.75.75 0 0 0-.38.65v5.26l-1.62-.94V5.1a4.52 4.52 0 0 1 2-3.1zm-.75 8.1l-2.07-1.2 2.07-1.2 2.07 1.2-2.07 1.2z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Anthropic',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M13.82 3.65l6.53 16.7h-3.41l-1.39-3.72H8.45l-1.39 3.72H3.65L10.18 3.65h3.64zm-1.07 4.14h-.05l-3.1 8.29h6.25l-3.1-8.29z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Google Cloud',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'NVIDIA',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8.9 6.2c0-.1 1.6-.2 3.5-.2 5.5 0 8.7 3.3 8.7 8.9 0 4.8-3.4 8.7-8.9 8.7-4.4 0-7.7-2.6-8.7-6.9 0-.1.1-.1.2-.1h2c.1 0 .2.1.2.2.8 3.1 3.2 4.9 6.3 4.9 4.3 0 6.8-3 6.8-6.8 0-4.4-2.8-6.8-6.8-6.8-1.5 0-2.8.1-3.3.2h-.1zm2.3 4.6c2.4 0 3.8 1.5 3.8 3.8 0 2.3-1.4 3.8-3.8 3.8-1.7 0-2.9-.9-3.4-2.4 0-.1 0-.1.1-.1h1.5c.1 0 .1 0 .1.1.3.8 1 1.2 1.7 1.2 1.4 0 2.2-.9 2.2-2.6 0-1.6-.8-2.5-2.2-2.5-.7 0-1.3.4-1.6 1-.1.1-.1.1-.2.1h-1.4c-.1 0-.1-.1-.1-.1.4-1.3 1.7-2.3 3.3-2.3z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Microsoft',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M1 1h10v10H1V1zm12 0h10v10H13V1zM1 13h10v10H1V13zm12 0h10v10H13V13z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Databricks',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 1L1 7.2v9.6L12 23l11-6.2V7.2L12 1zm0 3.6l7.8 4.4L12 13.4 4.2 9 12 4.6zm-8.8 6.5l8 4.5v7.8l-8-4.5v-7.8zm17.6 7.8l-8 4.5v-7.8l8-4.5v7.8z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Snowflake',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0l1.8 4.5L12 6l-1.8-1.5L12 0zm0 18l1.8 1.5L12 24l-1.8-4.5L12 18zM0 12l4.5-1.8L6 12l-1.5 1.8L0 12zm18 0l1.5-1.8L24 12l-4.5 1.8L18 12zm-4.5-4.5l3.2-3.2L18 6l-1.7 1.7L13.5 7.5zm-3 9l-3.2 3.2L6 18l1.7-1.7 2.8.2zm6 0l1.7 1.7L16.5 21.5l-3-3 2-2zm-9-9L5.8 5.8 7.5 2.5l3 3-2 2z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'AWS',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19.9 14.5c-.2-.3-.6-.5-.9-.5-.6 0-1.1.4-1.3.9-.8 2.2-2.8 3.8-5.3 3.8-3.1 0-5.7-2.5-5.7-5.7s2.5-5.7 5.7-5.7c1.8 0 3.4.9 4.4 2.3l-1.8 1.8c-.3.3-.1.8.3.8h4.5c.3 0 .5-.2.5-.5V7.3c0-.4-.5-.6-.8-.3l-1.5 1.5C16.9 6.7 14.8 5.5 12.4 5.5 8.3 5.5 5 8.8 5 13s3.3 7.5 7.4 7.5c3.5 0 6.4-2.4 7.2-5.7.1-.1.2-.2.3-.3z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Meta',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 6.5C8.8 2.4 3.7 2.1 1.2 5.5-.9 8.4-.2 13 2.8 15.6c2.4 2 5.8 1.6 8.2-.8l1 1.2c-3.1 3-7.6 3.4-10.7.8C-2 13.9-2.9 8 1 3.8 4.2-.6 10.4-.2 14 4.5l-2 2zm0 11c3.2 4.1 8.3 4.4 10.8 1 2.1-2.9 1.4-7.5-1.6-10.1-2.4-2-5.8-1.6-8.2.8l-1-1.2c3.1-3 7.6-3.4 10.7-.8 3.3 2.9 4.2 8.8.3 13-3.2 4.4-9.4 4-13-.7l2-2z" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Stripe',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697.5 12.82.5c-5.26 0-8.91 2.766-8.91 7.407 0 5.437 5.097 6.84 8.747 8.163 2.502.89 3.385 1.547 3.385 2.593 0 1.01-.89 1.528-2.316 1.528-2.434 0-5.32-1.077-7.23-2.094l-.94 5.568c1.94.945 5.074 1.528 8.17 1.528 5.612 0 9.176-2.613 9.176-7.397 0-5.89-5.187-7.144-8.936-8.498z" />
-      </svg>
-    ),
-  },
+  { name: 'OpenAI', domain: 'openai.com' },
+  { name: 'Anthropic', domain: 'anthropic.com' },
+  { name: 'Google Cloud', domain: 'cloud.google.com' },
+  { name: 'NVIDIA', domain: 'nvidia.com' },
+  { name: 'Microsoft', domain: 'microsoft.com' },
+  { name: 'Databricks', domain: 'databricks.com' },
+  { name: 'Snowflake', domain: 'snowflake.com' },
+  { name: 'Apple', domain: 'apple.com' },
+  { name: 'AWS', domain: 'aws.amazon.com' },
+  { name: 'Meta', domain: 'meta.com' },
+  { name: 'Stripe', domain: 'stripe.com' },
 ];
 
-const PLATFORM_LAYERS = [
-  { name: 'AI Workspace', desc: 'Unified command center', href: '/workspace', icon: '◫' },
-  { name: 'AI Playground', desc: 'Every model, one membership', href: '/workspace/playground', icon: '✦' },
-  { name: 'Agent Studio', desc: 'Build autonomous agents', href: '/workspace/agents', icon: '🤖' },
-  { name: 'Workflow Automation', desc: 'Business process orchestration', href: '/workspace/workflows', icon: '⟳' },
-  { name: 'Knowledge Pipeline', desc: 'RAG and document intelligence', href: '/workspace/knowledge', icon: '📚' },
-  { name: 'Analysis Studio', desc: 'Analytics and insights', href: '/workspace/analysis', icon: '📊' },
-  { name: 'Marketplace', desc: 'Apps, skills, and packs', href: '/workspace/store', icon: '🛒' },
-  { name: 'Enterprise Apps', desc: 'Invoice, HR, supply chain', href: '/workspace/apps', icon: '📦' },
-  { name: 'AI Governance', desc: 'Policies and approvals', href: '/workspace/governance', icon: '🏛' },
-  { name: 'Trust Engine', desc: 'Certify and monitor AI', href: '/workspace/trust', icon: '🛡' },
-  { name: 'Compliance AI', desc: 'Regulatory automation', href: '/workspace/compliance', icon: '⚖' },
+const PLATFORM_PILLARS = [
+  {
+    category: 'Core Intelligence',
+    tag: 'Foundation',
+    icon: '✦',
+    desc: 'Unified workspace & frontier model gateway',
+    modules: [
+      { name: 'AI Workspace', desc: 'Unified command center', href: '/workspace', icon: '◫' },
+      { name: 'AI Playground', desc: 'Every model, one membership', href: '/workspace/playground', icon: '✦' },
+      { name: 'Knowledge Pipeline', desc: 'RAG and document intelligence', href: '/workspace/knowledge', icon: '📚' },
+      { name: 'Analysis Studio', desc: 'Analytics and insights', href: '/workspace/analysis', icon: '📊' },
+    ],
+  },
+  {
+    category: 'Autonomous Execution',
+    tag: 'Orchestration',
+    icon: '⚡',
+    desc: 'Multi-agent systems & automated business workflows',
+    modules: [
+      { name: 'Agent Studio', desc: 'Build autonomous agents', href: '/workspace/agents', icon: '🤖' },
+      { name: 'Workflow Automation', desc: 'Business process orchestration', href: '/workspace/workflows', icon: '⟳' },
+      { name: 'Enterprise Apps', desc: 'Invoice, HR, supply chain', href: '/workspace/apps', icon: '📦' },
+      { name: 'Marketplace', desc: 'Apps, skills, and packs', href: '/workspace/store', icon: '🛒' },
+    ],
+  },
+  {
+    category: 'Trust & Governance',
+    tag: 'Security & SLA',
+    icon: '🛡',
+    desc: 'Continuous certification, policies & compliance',
+    modules: [
+      { name: 'AI Governance', desc: 'Policies and approvals', href: '/workspace/governance', icon: '🏛' },
+      { name: 'Trust Engine', desc: 'Certify and monitor AI', href: '/workspace/trust', icon: '🛡' },
+      { name: 'Compliance AI', desc: 'Regulatory automation', href: '/workspace/compliance', icon: '⚖' },
+    ],
+  },
 ];
 
 const MODELS = [
@@ -120,65 +75,37 @@ const AI_APPS = [
   {
     icon: '🧾',
     name: 'Invoice AI',
-    problem: 'Manual AP processing slows finance teams and increases error rates.',
-    value: 'Automate extraction, validation, fraud detection, and ERP sync.',
+    badge: 'Finance & AP Automation',
+    value: 'Automates document extraction, 3-way PO matching, anomaly detection, and direct ERP sync without manual review.',
+    image: '/images/apps/invoice-ai.jpg',
     demo: '/workspace/apps/invoice-ai',
     store: '/workspace/store',
   },
   {
-    icon: '📦',
-    name: 'Supply Chain AI',
-    problem: 'Procurement teams struggle to evaluate supplier offers at scale.',
-    value: 'AI-powered offer scoring, ranking, and negotiation intelligence.',
-    demo: '/workspace/apps/supply-chain-ai',
-    store: '/workspace/store',
-  },
-  {
-    icon: '👥',
-    name: 'HR AI',
-    problem: 'Onboarding and policy Q&A consume HR bandwidth.',
-    value: 'Automated employee workflows, screening, and policy assistance.',
-    demo: '/workspace/apps',
-    store: '/workspace/store',
-  },
-  {
-    icon: '💬',
-    name: 'Customer Support AI',
-    problem: 'Support volume exceeds agent capacity across channels.',
-    value: 'Multi-language voice and text agents with knowledge integration.',
-    demo: '/workspace/apps/customer-support-ai',
-    store: '/workspace/store/apps/customer-support-ai',
-  },
-  {
     icon: '📈',
     name: 'Sales AI',
-    problem: 'Sales teams waste hours on manual outreach and proposal drafting.',
-    value: 'Generate personalized emails, proposals, outreach campaigns, meeting preparation, and AI-powered sales workflows from one unified platform.',
+    badge: 'Revenue Acceleration',
+    value: 'Autonomous copilot generating bespoke enterprise outreach, meeting preparation, and real-time CRM updates.',
+    image: '/images/apps/sales-ai.jpg',
     demo: '/workspace/apps/sales-ai',
     store: '/workspace/store/apps/sales-ai',
   },
   {
-    icon: '⚖',
-    name: 'Compliance AI',
-    problem: 'Regulatory frameworks require continuous evidence and monitoring.',
-    value: 'ISO, GDPR, and AI governance workflows with audit trails.',
-    demo: '/workspace/apps/compliance-ai',
-    store: '/workspace/store',
+    icon: '💬',
+    name: 'Customer Support AI',
+    badge: 'Autonomous Resolution',
+    value: 'Autonomous multi-lingual text and voice agents delivering instant ticket resolution backed by enterprise knowledge.',
+    image: '/images/apps/customer-support-ai.jpg',
+    demo: '/workspace/apps/customer-support-ai',
+    store: '/workspace/store/apps/customer-support-ai',
   },
   {
-    icon: '👁',
-    name: 'Presence Audit',
-    problem: 'Brand visibility in AI search is invisible to marketing teams.',
-    value: 'Audit and optimize presence across ChatGPT, Claude, Gemini, and more.',
-    demo: '/workspace/apps/presence-audit',
-    store: '/workspace/store',
-  },
-  {
-    icon: '✍',
-    name: 'Content AI',
-    problem: 'Teams need to verify AI-generated content and humanize drafts at scale.',
-    value: 'Detect AI probability, humanize with multi-model routing, Trust Engine scoring.',
-    demo: '/workspace/apps/content-ai',
+    icon: '📦',
+    name: 'Supply Chain AI',
+    badge: 'Procurement Intelligence',
+    value: 'Evaluates supplier proposals, ranks bids by cost and risk, and equips procurement teams with negotiation intelligence.',
+    image: '/images/apps/supply-chain-ai.jpg',
+    demo: '/workspace/apps/supply-chain-ai',
     store: '/workspace/store',
   },
 ];
@@ -521,21 +448,114 @@ export default function HomePageContent() {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className={section.section} id="trusted">
-        <div className={section.sectionHeader}>
-          <span className={section.sectionLabel}>Trusted by</span>
-          <h2 className={section.sectionTitle}>Enterprises, partners, and institutions worldwide</h2>
-        </div>
-        <div className={section.logoGrid}>
-          {TRUSTED_LOGOS.map((item) => (
-            <div key={item.name} className={section.logoCard}>
-              <span className={section.logoIconWrap}>
-                {item.icon}
-              </span>
-              <span>{item.name}</span>
+      {/* Social Proof / Trusted Constellation */}
+      <section className={section.trustedSection} id="trusted">
+        <div className={section.trustedOrbitGlow} aria-hidden />
+        <div className={section.trustedOrbitRingOuter} aria-hidden />
+        <div className={section.trustedOrbitRingInner} aria-hidden />
+
+        <div className={section.trustedConstellation}>
+          {/* Top Row */}
+          <div className={section.trustedRowTop}>
+            {[TRUSTED_LOGOS[0], TRUSTED_LOGOS[2], TRUSTED_LOGOS[4]].map((item, idx) => (
+              <div
+                key={item.name}
+                className={`${section.trustedCapsule} ${idx % 2 === 0 ? section.float1 : section.float2}`}
+              >
+                <span className={section.trustedIconOrb}>
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${item.domain}&sz=128`}
+                    alt={`${item.name} logo`}
+                    className={section.trustedLogoImg}
+                    width={18}
+                    height={18}
+                    loading="lazy"
+                  />
+                </span>
+                <span className={section.trustedCapsuleName}>{item.name}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Middle: Left logos, Center title hub, Right logos */}
+          <div className={section.trustedMiddleArea}>
+            <div className={`${section.trustedColSide} ${section.trustedColLeft}`}>
+              {[TRUSTED_LOGOS[1], TRUSTED_LOGOS[5]].map((item, idx) => (
+                <div
+                  key={item.name}
+                  className={`${section.trustedCapsule} ${idx === 0 ? section.float3 : section.float4}`}
+                >
+                  <span className={section.trustedIconOrb}>
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${item.domain}&sz=128`}
+                      alt={`${item.name} logo`}
+                      className={section.trustedLogoImg}
+                      width={18}
+                      height={18}
+                      loading="lazy"
+                    />
+                  </span>
+                  <span className={section.trustedCapsuleName}>{item.name}</span>
+                </div>
+              ))}
             </div>
-          ))}
+
+            <div className={section.trustedCenterContent}>
+              <div className={section.trustedBadge}>
+                <span className={section.trustedBadgeDot} aria-hidden />
+                Trusted by Industry Leaders
+              </div>
+              <h2 className={section.trustedHeading}>
+                Enterprises, partners, and institutions worldwide
+              </h2>
+              <p className={section.trustedSubtext}>
+                Powering mission-critical AI workloads, autonomous agents, and enterprise compliance across global teams.
+              </p>
+            </div>
+
+            <div className={`${section.trustedColSide} ${section.trustedColRight}`}>
+              {[TRUSTED_LOGOS[3], TRUSTED_LOGOS[6]].map((item, idx) => (
+                <div
+                  key={item.name}
+                  className={`${section.trustedCapsule} ${idx === 0 ? section.float2 : section.float1}`}
+                >
+                  <span className={section.trustedIconOrb}>
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${item.domain}&sz=128`}
+                      alt={`${item.name} logo`}
+                      className={section.trustedLogoImg}
+                      width={18}
+                      height={18}
+                      loading="lazy"
+                    />
+                  </span>
+                  <span className={section.trustedCapsuleName}>{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Row */}
+          <div className={section.trustedRowBottom}>
+            {[TRUSTED_LOGOS[7], TRUSTED_LOGOS[8], TRUSTED_LOGOS[9], TRUSTED_LOGOS[10]].map((item, idx) => (
+              <div
+                key={item.name}
+                className={`${section.trustedCapsule} ${idx % 2 === 0 ? section.float4 : section.float3}`}
+              >
+                <span className={section.trustedIconOrb}>
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${item.domain}&sz=128`}
+                    alt={`${item.name} logo`}
+                    className={section.trustedLogoImg}
+                    width={18}
+                    height={18}
+                    loading="lazy"
+                  />
+                </span>
+                <span className={section.trustedCapsuleName}>{item.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -548,16 +568,31 @@ export default function HomePageContent() {
             From workspace to governance — every module connected in a unified enterprise stack.
           </p>
         </div>
-        <div className={section.platformStack}>
-          {PLATFORM_LAYERS.map((layer) => (
-            <Link key={layer.name} href={layer.href} className={section.platformLayer}>
-              <span className={section.platformLayerIcon}>{layer.icon}</span>
-              <div className={section.platformLayerBody}>
-                <div className={section.platformLayerName}>{layer.name}</div>
-                <div className={section.platformLayerDesc}>{layer.desc}</div>
+        <div className={section.platformBento}>
+          {PLATFORM_PILLARS.map((pillar) => (
+            <div key={pillar.category} className={section.platformPillarCard}>
+              <div className={section.platformPillarHeader}>
+                <div className={section.platformPillarBadge}>
+                  <span className={section.platformPillarIcon}>{pillar.icon}</span>
+                  <span>{pillar.tag}</span>
+                </div>
+                <h3 className={section.platformPillarTitle}>{pillar.category}</h3>
+                <p className={section.platformPillarDesc}>{pillar.desc}</p>
               </div>
-              <span className={section.platformLayerArrow}>→</span>
-            </Link>
+
+              <div className={section.platformModuleList}>
+                {pillar.modules.map((mod) => (
+                  <Link key={mod.name} href={mod.href} className={section.platformModuleItem}>
+                    <span className={section.platformModuleIcon}>{mod.icon}</span>
+                    <div className={section.platformModuleText}>
+                      <span className={section.platformModuleName}>{mod.name}</span>
+                      <span className={section.platformModuleDesc}>{mod.desc}</span>
+                    </div>
+                    <span className={section.platformModuleArrow} aria-hidden>→</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
@@ -595,16 +630,42 @@ export default function HomePageContent() {
         <div className={section.appGrid}>
           {AI_APPS.map((app) => (
             <div key={app.name} className={section.appCard}>
-              <div className={section.appCardIcon}>{app.icon}</div>
-              <h3 className={section.appCardName}>{app.name}</h3>
-              <p className={section.appCardProblem}><strong>Problem:</strong> {app.problem}</p>
-              <p className={section.appCardValue}><strong>Value:</strong> {app.value}</p>
-              <div className={section.appCardActions}>
-                <Link href={app.demo} className={styles.btnSecondary}>View Demo</Link>
-                <Link href={app.store} className={styles.btnPrimary}>Install</Link>
+              {/* Top: Conceptual image explaining the AI purpose */}
+              <div className={section.appImageWrapper}>
+                <img
+                  src={app.image}
+                  alt={`${app.name} illustration`}
+                  className={section.appCardImage}
+                  loading="lazy"
+                />
+                <div className={section.appImageOverlay} aria-hidden />
+              </div>
+
+              {/* Down: Content text & actions */}
+              <div className={section.appCardBody}>
+                <div className={section.appCardHeader}>
+                  <div className={section.appCardTitleGroup}>
+                    <div className={section.appCardIconTile}>{app.icon}</div>
+                    <h3 className={section.appCardName}>{app.name}</h3>
+                  </div>
+                  <span className={section.appCategoryBadge}>{app.badge}</span>
+                </div>
+
+                <p className={section.appCardDesc}>{app.value}</p>
+
+                <div className={section.appCardActions}>
+                  <Link href={app.demo} className={styles.btnSecondary}>View Demo</Link>
+                  <Link href={app.store} className={styles.btnPrimary}>Install App</Link>
+                </div>
               </div>
             </div>
           ))}
+        </div>
+        <div className={section.appGridFooter}>
+          <span className={section.appGridCount}>+ 24 more enterprise AI apps available</span>
+          <Link href="/workspace/store" className={styles.btnSecondary}>
+            Browse All Apps in Store →
+          </Link>
         </div>
       </section>
 

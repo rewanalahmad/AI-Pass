@@ -12,9 +12,10 @@ import styles from './premium-nav.module.css';
 
 function isActive(pathname: string | null, href: string): boolean {
   if (!pathname) return false;
-  if (href.startsWith('/#')) return pathname === '/';
+  if (href.startsWith('/#') || href.startsWith('#')) return false;
   if (href.startsWith('http')) return false;
-  return pathname === href || (href !== '/' && pathname.startsWith(href));
+  if (href === '/') return pathname === '/';
+  return pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
 }
 
 function isNavItemActive(pathname: string | null, item: SiteNavItem): boolean {

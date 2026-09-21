@@ -4,6 +4,12 @@
       <stop stop-color="#58a6ff"/>
       <stop offset="1" stop-color="#1f52d0"/>
     </linearGradient>
+    <style>
+      .logo-ai { fill: #f3f4f6; }
+      @media (prefers-color-scheme: light) {
+        .logo-ai { fill: #0f172a; }
+      }
+    </style>
   </defs>
   <rect width="40" height="40" rx="11" fill="url(#aipass-tile)"/>
   <g transform="scale(0.3125)">
@@ -11,8 +17,8 @@
     <path d="M92 34v60" stroke="#fff" stroke-width="11" stroke-linecap="round" opacity="0.65"/>
   </g>
   <text x="52" y="27.5"
-        font-family="Syne, 'IBM Plex Sans', 'Segoe UI', sans-serif"
+        font-family="Syne, 'Plus Jakarta Sans', 'IBM Plex Sans', 'Segoe UI', sans-serif"
         font-size="21" font-weight="700" letter-spacing="-0.6">
-    <tspan fill="#f3f4f6">AI</tspan><tspan fill="#58a6ff">-Pass</tspan>
+    <tspan class="logo-ai">AI</tspan><tspan fill="#58a6ff">-Pass</tspan>
   </text>
 </svg>
