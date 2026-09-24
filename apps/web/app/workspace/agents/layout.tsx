@@ -20,6 +20,14 @@ const NAV = [
 export default function AgentsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  if (pathname === '/workspace/agents') {
+    return (
+      <WorkspaceLayoutClient showSearch={true}>
+        {children}
+      </WorkspaceLayoutClient>
+    );
+  }
+
   return (
     <WorkspaceLayoutClient
       title="Agent Studio"
